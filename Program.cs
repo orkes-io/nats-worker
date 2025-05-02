@@ -4,13 +4,8 @@ using NATS.Client.JetStream.Models;
 using NATS.Net;
 
 string requestsStream = "requests-stream";
+string requestsTopicPrefix = "requests.";
 string responseTopic = "response.feedback";
-
-// Usage:
-// $ nats-worker
-//   Launches a worker that listens on all subjects
-// $ nats-worker <subject>
-//   Launches a worker that filters on the specific subject
 
 var arguments = Environment.GetCommandLineArgs();
 string subject = (arguments.Length > 1) ? arguments[1] : "all";
@@ -29,7 +24,7 @@ Console.CancelKeyPress += async (sender, eventArgs) =>
 
 var consumerConfig = new ConsumerConfig(consumerName)
 {
-    FilterSubject = "requests." + ((subject == "all") ? "*" : subject)
+    FilterSubject = requestsTopicPrefix + ((subject == "all") ? "*" : subject)
 };
 var consumer = await js.CreateOrUpdateConsumerAsync(requestsStream, consumerConfig);
 
